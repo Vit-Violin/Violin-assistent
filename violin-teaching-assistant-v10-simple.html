@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Violin Teaching Assistant v10</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"]{--text-xs:clamp(.75rem,.7rem + .25vw,.875rem);--text-sm:clamp(.875rem,.8rem + .35vw,1rem);--text-base:clamp(1rem,.95rem + .25vw,1.125rem);--text-lg:clamp(1.125rem,1rem + .75vw,1.5rem);--text-xl:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);--space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;--color-surface-offset:#edeae5;--color-border:#d4d1ca;--color-text:#28251d;--color-text-muted:#706e68;--color-text-faint:#9b9893;--color-text-inverse:#f9f8f4;--color-primary:#01696f;--color-primary-hover:#0c4e54;--color-primary-highlight:#cedcd8;--color-success:#437a22;--color-success-soft:#d4dfcc;--color-warning:#964219;--color-warning-soft:#ddcfc6;--color-danger:#a13544;--color-danger-soft:#dececb;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;--shadow-sm:0 1px 2px rgba(40,37,29,.06);--font-body:'Satoshi',Inter,sans-serif}
+    [data-theme="dark"]{--color-bg:#171614;--color-surface:#1c1b19;--color-surface-2:#201f1d;--color-surface-offset:#22211f;--color-border:#393836;--color-text:#cdccca;--color-text-muted:#9d9c98;--color-text-faint:#6a6965;--color-text-inverse:#2b2a28;--color-primary:#4f98a3;--color-primary-hover:#227f8b;--color-primary-highlight:#313b3b;--color-success:#6daa45;--color-success-soft:#3a4435;--color-warning:#bb653b;--color-warning-soft:#564942;--color-danger:#dd6974;--color-danger-soft:#574848;--shadow-sm:0 1px 2px rgba(0,0,0,.24)}
+    *{box-sizing:border-box} html,body{height:100%;margin:0} body{font-family:var(--font-body);font-size:var(--text-base);line-height:1.55;background:var(--color-bg);color:var(--color-text)} button,input,textarea,select{font:inherit;color:inherit} button{cursor:pointer}
+    .app{display:grid;grid-template-columns:320px 1fr;grid-template-rows:auto 1fr;height:100dvh}.sidebar{grid-row:1/-1;background:var(--color-surface);border-right:1px solid var(--color-border);padding:var(--space-6);overflow:auto}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);padding:var(--space-4) var(--space-6);border-bottom:1px solid var(--color-border);background:color-mix(in srgb,var(--color-surface-2) 90%,transparent);position:sticky;top:0;z-index:10;backdrop-filter:blur(10px)}.main{overflow:auto;padding:var(--space-6)}
+    .logo{display:flex;gap:var(--space-3);align-items:center;margin-bottom:var(--space-8)}.logo-mark{width:40px;height:40px;border-radius:14px;background:var(--color-primary-highlight);display:grid;place-items:center;color:var(--color-primary)}.section-title{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-faint);margin:var(--space-6) 0 var(--space-3)}
+    .student-list,.list,.timeline,.recommend-list{display:grid;gap:var(--space-2)}.student-chip,.btn,.tab,.mode-btn{min-height:44px;border-radius:var(--radius-lg)}.student-chip{width:100%;text-align:left;padding:var(--space-3);background:transparent;border:1px solid transparent;display:grid;gap:.15rem}.student-chip.active,.student-chip:hover{background:var(--color-surface-2);border-color:var(--color-border)}
+    .btn,.mode-btn{border:1px solid var(--color-border);background:var(--color-surface);padding:.7rem 1rem}.btn-primary,.mode-btn.active{background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary)}.btn-danger{background:var(--color-danger);color:var(--color-text-inverse);border-color:var(--color-danger)} .btn-row{display:flex;gap:var(--space-3);flex-wrap:wrap}
+    .mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-2);margin-top:var(--space-4)}
+    .grid{display:grid;gap:var(--space-6)}.overview{grid-template-columns:repeat(4,minmax(0,1fr))}.two-col{grid-template-columns:1fr 1fr}.three-col{grid-template-columns:1fr 1fr 1fr}.card,.panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:var(--space-5)}
+    .item{padding:var(--space-3);border-radius:var(--radius-lg);background:var(--color-surface-2);border:1px solid color-mix(in srgb,var(--color-border) 85%,transparent)}.item strong{display:block;margin-bottom:.2rem}.muted{color:var(--color-text-muted)}.faint{color:var(--color-text-faint)}
+    .pill,.tag,.status{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .65rem;border-radius:var(--radius-full);font-size:var(--text-xs)}.pill{background:var(--color-surface-offset)}.tag{background:var(--color-primary-highlight);color:var(--color-primary)}.status.present{background:var(--color-success-soft);color:var(--color-success)}.status.absent{background:var(--color-danger-soft);color:var(--color-danger)}.status.late{background:var(--color-warning-soft);color:var(--color-warning)}
+    .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}.field,.field-full{display:grid;gap:.35rem}.field-full{grid-column:1/-1}label{font-size:var(--text-sm);font-weight:500} input,textarea,select{width:100%;min-height:44px;padding:.8rem .9rem;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-md)} textarea{min-height:100px;resize:vertical}
+    .tabs{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-5)}.tab{padding:.65rem 1rem;border:1px solid var(--color-border);background:var(--color-surface)}.tab.active{background:var(--color-primary-highlight);color:var(--color-primary)}.tab-panel{display:none}.tab-panel.active{display:block}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}.good{background:var(--color-success-soft)}.warn{background:var(--color-warning-soft)}.danger-soft{background:var(--color-danger-soft)}.empty{padding:var(--space-8);text-align:center;color:var(--color-text-muted);border:1px dashed var(--color-border);border-radius:var(--radius-xl)}.print-sheet{background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-5)}
+    .teacher-only{display:block}.student-only{display:none}.student-mode .teacher-only{display:none!important}.student-mode .student-only{display:block!important}.student-mode [data-teacher-tab]{display:none!important}
+    @media print{body{background:white;color:black}.sidebar,.header,.tabs,.btn-row,.mode-switch,.section-title{display:none!important}.main{padding:0}.tab-panel{display:block!important}.card,.panel,.print-sheet{box-shadow:none;border:1px solid #ccc;break-inside:avoid}.app{display:block;height:auto}}
+    @media (max-width:1180px){.overview,.three-col{grid-template-columns:1fr 1fr}} @media (max-width:860px){.app{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}.sidebar{grid-row:auto;border-right:none;border-bottom:1px solid var(--color-border)}.overview,.three-col,.field-grid,.split,.two-col{grid-template-columns:1fr}.header{padding:var(--space-4)}.main{padding:var(--space-4)}}
+  </style>
+</head>
+<body>
+<div class="app" id="appRoot">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v13.5a2.5 2.5 0 1 1-2-2.45V6l10-3v11.5a2.5 2.5 0 1 1-2-2.45V4.6L8 6.3"/></svg></div>
+      <div><strong>Violin Teaching Assistant v10</strong><div class="muted">Simple version: instrument tracking, weekly schedule, calendar</div></div>
+    </div>
+    <div class="btn-row teacher-only">
+      <button class="btn btn-primary" id="newStudentBtn">+ New student</button>
+      <button class="btn" id="exportBtn">Export data</button>
+    </div>
+    <div class="teacher-only" style="margin-top:var(--space-3)"><label for="importFile">Import data</label><input id="importFile" type="file" accept="application/json"></div>
+    <div class="section-title">View mode</div>
+    <div class="mode-switch">
+      <button class="mode-btn active" id="teacherModeBtn">Teacher</button>
+      <button class="mode-btn" id="studentModeBtn">Parent / Student</button>
+    </div>
+    <div class="section-title">Students</div>
+    <div class="student-list" id="studentList"></div>
+    <div class="section-title">New in v10</div>
+    <div class="list">
+      <div class="item teacher-only"><strong>Instrument tracking</strong><span class="muted">Size, instrument name and last change date for each student.</span></div>
+      <div class="item"><strong>Attendance tracking</strong><span class="muted">Present, absent, late, cancelled history.</span></div>
+      <div class="item"><strong>Weekly schedule + calendar</strong><span class="muted">Regular lessons, make-up lessons, extra lessons, exams, concerts and competitions.</span></div>
+    </div>
+  </aside>
+
+  <header class="header">
+    <div>
+      <h2 id="studentName" style="margin:0;font-size:var(--text-xl)">—</h2>
+      <p id="studentSubtitle" class="muted" style="margin:.2rem 0 0">Choose a student.</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn" data-theme-toggle>🌙</button>
+      <button class="btn teacher-only" id="analyzeBtn">Analyze</button>
+      <button class="btn" id="printHomeBtn">Print home plan</button>
+      <button class="btn btn-primary" id="printProgressBtn">Print progress sheet</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="grid overview" id="kpis"></section>
+
+    <section class="card" style="margin-top:var(--space-6)">
+      <div class="tabs">
+        <button class="tab active teacher-only" data-tab="profile" data-teacher-tab>Profile</button>
+        <button class="tab teacher-only" data-tab="lessons" data-teacher-tab>Lessons</button>
+        <button class="tab teacher-only" data-tab="repertoire" data-teacher-tab>Repertoire</button>
+        <button class="tab teacher-only" data-tab="suggestions" data-teacher-tab>Suggestions</button>
+        <button class="tab teacher-only" data-tab="private" data-teacher-tab>Private notes</button>
+        <button class="tab teacher-only" data-tab="attendance" data-teacher-tab>Attendance</button>
+        <button class="tab teacher-only" data-tab="instrument" data-teacher-tab>Instrument</button>
+        <button class="tab" data-tab="schedule">Weekly schedule</button>
+        <button class="tab" data-tab="calendar">Calendar</button>
+        <button class="tab" data-tab="theory">Theory knowledge</button>
+        <button class="tab" data-tab="homeplan">Home plan</button>
+        <button class="tab" data-tab="progress">Progress sheet</button>
+      </div>
+
+      <div class="tab-panel active teacher-only" data-panel="profile">
+        <div class="split">
+          <div class="panel">
+            <h3>Student profile</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="nameInput">Name</label><input id="nameInput"></div>
+              <div class="field"><label for="birthInput">Date of birth</label><input id="birthInput" type="date"></div>
+              <div class="field"><label for="levelInput">Level</label><select id="levelInput"><option>Beginner</option><option>Early intermediate</option><option>Intermediate</option><option>Competition preparation</option></select></div>
+              <div class="field"><label for="practiceInput">Home practice routine</label><input id="practiceInput"></div>
+              <div class="field-full"><label for="goalsInput">Study goals</label><textarea id="goalsInput"></textarea></div>
+              <div class="field-full"><label for="risksInput">Technical issues / risks</label><textarea id="risksInput"></textarea></div>
+              <div class="field-full"><label for="targetInput">Target piece / concert / competition</label><textarea id="targetInput"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveProfileBtn">Save profile</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Quick overview</h3>
+            <div class="list" id="quickProfile" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel teacher-only" data-panel="lessons">
+        <div class="split">
+          <div class="panel">
+            <h3>New lesson note</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="lessonDate">Date</label><input id="lessonDate" type="date"></div>
+              <div class="field"><label for="lessonFocus">Focus</label><input id="lessonFocus"></div>
+              <div class="field-full"><label for="lessonTechnique">Technique</label><textarea id="lessonTechnique"></textarea></div>
+              <div class="field-full"><label for="lessonRep">Repertoire</label><textarea id="lessonRep"></textarea></div>
+              <div class="field-full"><label for="lessonNext">Next direction</label><textarea id="lessonNext"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveLessonBtn">Save lesson note</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Lesson history</h3>
+            <div class="timeline" id="lessonTimeline" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel teacher-only" data-panel="repertoire">
+        <div class="split">
+          <div class="panel">
+            <h3>Add repertoire item</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="repType">Type</label><select id="repType"><option>Piece</option><option>Etude</option><option>Scale</option></select></div>
+              <div class="field"><label for="repStatus">Status</label><select id="repStatus"><option>Played</option><option>In progress</option><option>Planned</option></select></div>
+              <div class="field-full"><label for="repTitle">Title</label><input id="repTitle"></div>
+              <div class="field-full"><label for="repNote">Note</label><textarea id="repNote"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveRepBtn">Save item</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Current repertoire</h3>
+            <div class="list" id="repertoireList" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel teacher-only" data-panel="suggestions">
+        <div class="grid two-col">
+          <div class="panel"><h3>3 etudes / technical materials</h3><div id="etudeSuggestions" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>3 next repertoire ideas</h3><div id="repertoireSuggestions" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>Technical priorities</h3><div id="prioritySuggestions" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>Teaching tips</h3><div id="teachingSuggestions" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>Next lesson plan</h3><div id="nextLessonSuggestions" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>Why these suggestions fit</h3><div id="reasonSuggestions" class="recommend-list" style="margin-top:1rem"></div></div>
+        </div>
+      </div>
+
+      <div class="tab-panel teacher-only" data-panel="private">
+        <div class="split">
+          <div class="panel">
+            <h3>Private teacher notes</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field-full"><label for="privateNoteInput">Confidential note</label><textarea id="privateNoteInput" placeholder="Observations, family context, motivation, lesson strategy, things not for print..."></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="savePrivateNoteBtn">Save private note</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Private note history</h3>
+            <div class="list" id="privateNotesList" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel teacher-only" data-panel="instrument">
+        <div class="split">
+          <div class="panel">
+            <h3>Current instrument</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="instrumentType">Instrument type</label><select id="instrumentType"><option>Violin</option><option>Viola</option><option>Other</option></select></div>
+              <div class="field"><label for="instrumentSize">Size</label><select id="instrumentSize"><option>1/16</option><option>1/10</option><option>1/8</option><option>1/4</option><option>1/2</option><option>3/4</option><option>4/4</option><option>Custom</option></select></div>
+              <div class="field-full"><label for="instrumentName">Instrument name / description</label><input id="instrumentName"></div>
+              <div class="field"><label for="instrumentChanged">Last changed</label><input id="instrumentChanged" type="date"></div>
+              <div class="field"><label for="instrumentNote">Short setup note</label><input id="instrumentNote"></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveInstrumentBtn">Save instrument</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Instrument history</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="historyDate">Date</label><input id="historyDate" type="date"></div>
+              <div class="field"><label for="historySize">New size</label><input id="historySize"></div>
+              <div class="field-full"><label for="historyText">Note</label><textarea id="historyText"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveInstrumentHistoryBtn">Add history item</button></div>
+            </div>
+            <div class="list" id="instrumentHistoryList" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel teacher-only" data-panel="attendance">
+        <div class="split">
+          <div class="panel">
+            <h3>Add attendance record</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="attendanceDate">Date</label><input id="attendanceDate" type="date"></div>
+              <div class="field"><label for="attendanceStatus">Status</label><select id="attendanceStatus"><option>Present</option><option>Late</option><option>Absent</option><option>Cancelled</option></select></div>
+              <div class="field-full"><label for="attendanceNote">Note</label><textarea id="attendanceNote"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveAttendanceBtn">Save attendance</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Attendance history</h3>
+            <div class="list" id="attendanceList" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="schedule">
+        <div class="split">
+          <div class="panel teacher-only">
+            <h3>Add weekly lesson slot</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="slotDay">Day</label><select id="slotDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option><option>Sunday</option></select></div>
+              <div class="field"><label for="slotType">Type</label><select id="slotType"><option>Regular lesson</option><option>Make-up lesson</option><option>Extra lesson</option></select></div>
+              <div class="field"><label for="slotTime">Time</label><input id="slotTime" placeholder="16:00-16:45"></div>
+              <div class="field"><label for="slotFrequency">Frequency</label><select id="slotFrequency"><option>Weekly</option><option>Every 2 weeks</option><option>Occasional</option></select></div>
+              <div class="field-full"><label for="slotNote">Note</label><textarea id="slotNote"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveSlotBtn">Save weekly slot</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Weekly lesson schedule</h3>
+            <div class="list" id="weeklyScheduleList" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="calendar">
+        <div class="split">
+          <div class="panel teacher-only">
+            <h3>Add concert / competition</h3>
+            <div class="field-grid" style="margin-top:1rem">
+              <div class="field"><label for="eventDate">Date</label><input id="eventDate" type="date"></div>
+              <div class="field"><label for="eventType">Type</label><select id="eventType"><option>Regular lesson</option><option>Make-up lesson</option><option>Extra lesson</option><option>Concert</option><option>Competition</option><option>Exam</option><option>Masterclass</option><option>Other event</option></select></div>
+              <div class="field-full"><label for="eventTitle">Title</label><input id="eventTitle"></div>
+              <div class="field"><label for="eventStudent">Student</label><input id="eventStudent" placeholder="Name or All students"></div>
+              <div class="field"><label for="eventTime">Time</label><input id="eventTime" placeholder="16:00-16:45"></div>
+              <div class="field-full"><label for="eventNote">Note</label><textarea id="eventNote"></textarea></div>
+              <div class="field-full"><button class="btn btn-primary" id="saveEventBtn">Save event</button></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Shared studio calendar</h3>
+            <div class="list" id="calendarList" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="theory">
+        <div class="grid two-col teacher-only">
+          <div class="panel"><h3>What the student should roughly know</h3><div id="theoryKnowledge" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>Theory checklist</h3><div id="theoryChecklist" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>How to connect theory to violin lessons</h3><div id="theoryTeaching" class="recommend-list" style="margin-top:1rem"></div></div>
+          <div class="panel"><h3>Next theory step</h3><div id="theoryNext" class="recommend-list" style="margin-top:1rem"></div></div>
+        </div>
+        <div class="student-only">
+          <div class="panel">
+            <h3>Theory made simple</h3>
+            <div class="list" id="studentTheorySimple" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="homeplan">
+        <div class="print-sheet" id="homePlanSheet"></div>
+      </div>
+
+      <div class="tab-panel" data-panel="progress">
+        <div class="print-sheet" id="progressSheet"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const db = {
+  levels: {
+    'Beginner': {
+      rep: ['Twinkle, Twinkle Little Star','Lightly Row','Song of the Wind','Go Tell Aunt Rhody','Long, Long Ago','Gavotte (Gossec)'],
+      etudes: ['Open-string rhythm patterns','Simple detache and legato on one string','Short extracts from Suzuki Book 1'],
+      nextLesson: ['Review posture and bow hold without rushing.','Use one short teacher-student duet.','End the lesson with a piece the student already knows securely.']
+    },
+    'Early intermediate': {
+      rep: ['Kuchler: Concertino op. 11','Telemann: Concerto in D major','Seitz: Student Concerto No. 2','Humoresque (arr.)','Gavotte in G minor (J. S. Bach)'],
+      etudes: ['Wohlfahrt op. 45 Book 1','Sevcik op. 1 selected exercises','Schradieck Book 1 short sections'],
+      nextLesson: ['Connect the technical drill directly to one bar in the piece.','Set aside 5 minutes for pure intonation work.','Use a short before-and-after recording.']
+    },
+    'Intermediate': {
+      rep: ['Vivaldi: Concerto in A minor','Accolay: Concerto in A minor','Fiocco: Allegro','Bach: Double Concerto','Handel sonata'],
+      etudes: ['Wohlfahrt op. 45 Book 2','Mazas op. 36','Sevcik op. 2 bowing studies'],
+      nextLesson: ['Include one uninterrupted performance run.','Create a contrast between technical and musical tasks.','Choose only two critical places to fix deeply.']
+    },
+    'Competition preparation': {
+      rep: ['Accolay','Vivaldi A minor or G minor','A contrasting lyrical piece for tone','Bach according to level'],
+      etudes: ['Mazas op. 36','Selected Kreutzer studies','Sevcik op. 2 chosen for the needed bowing pattern'],
+      nextLesson: ['Start with a mock performance.','After the run, fix only two or three major points.','Finish with a confident musical run-through.']
+    }
+  },
+  problems: {
+    'intonation': {etudes:['Slow Wohlfahrt intonation studies','Schradieck Book 1 in short doses','Two-note tuning work with teacher support'],reps:['A lyrical piece in G or D major','A melody with longer sustained notes','A slower piece with more pitch control than speed'],priorities:['Slow finger placement with a reference pitch.','Hear the phrase before placing the note.','Do not increase speed before pitch is stable.'],tips:['The student should hear the pitch internally before placing the finger.']},
+    'bow': {etudes:['Wohlfahrt No. 1 type bowing study','Sevcik op. 2 for bow distribution','Open-string rhythm patterns with varied bow lengths'],reps:['Kuchler Concertino','Telemann Gavotte','A short rhythmically clear piece for even bow use'],priorities:['Straight bow and contact point.','Separate lower, middle and upper bow work.','Transfer the drill directly into repertoire.'],tips:['After each technical model, show the same gesture inside the repertoire.']},
+    'vibrato': {etudes:['Long-tone vibrato work with no pressure','Short 2–4 minute vibrato blocks','Lyrical phrases without rhythmic stress'],reps:['A singing slow melody','Humoresque','A lyrical tone-building piece'],priorities:['Freedom first, regularity second, speed last.','Move vibrato into melody before faster repertoire.','Do not attach vibrato to excess left-hand pressure.'],tips:['Daily short vibrato work is usually better than one long block.']},
+    'shifting': {etudes:['Short 1st-3rd position patterns','Sevcik shifting drills in small doses','Simple two-octave scales with planned shifts'],reps:['Pieces with short entries into third position','A simple melody in third position','Seitz or Telemann depending on level'],priorities:['Hear the target note before the shift.','Release the thumb during movement.','Do not hurry the speed of the shift.'],tips:['Teach the shift first as an arm movement, not only a finger motion.']},
+    'rhythm': {etudes:['Spoken rhythm and clapping patterns','Single-string rhythm drills','Teacher duet with a steady pulse'],reps:['Song of the Wind','Go Tell Aunt Rhody','A short piece with clear pulse'],priorities:['Steady pulse matters more than speed.','Alternate speaking, stepping and playing.','Do not overload the student with too many new variables at once.'],tips:['Rhythm improves faster when connected to speech, clapping or walking.']},
+    'tension': {etudes:['Open strings with free shoulder release','Slow bows with no pressure','Short body-awareness drills'],reps:['A familiar easy piece with no performance pressure','A slow lyrical phrase','A short relaxed tone piece'],priorities:['Add frequent physical resets.','Shorten the task and raise the quality.','Separate the motion without violin and with violin.'],tips:['Tension is usually solved by simplifying the task, not by demanding more effort.']}
+  },
+  theory: {
+    'Beginner': {
+      knowledge:['Recognise the staff, treble clef and the basic notes currently used on the violin.','Understand basic note values: whole note, half note, quarter note and simple eighth notes.','Recognise basic dynamics such as piano and forte.','Understand what a bar, barline and simple meters such as 2/4, 3/4 and 4/4 mean.','Know the open strings G-D-A-E and connect them to the instrument and ear.'],
+      checklist:['Can name notes in a simple first-position range.','Can clap a simple rhythm.','Can hear or identify strong and weak beats.','Knows what piano and forte mean.','Can name the open strings.'],
+      teaching:['Teach theory through the piece currently being played, not as a separate abstract topic.','Connect rhythm to walking, clapping and speaking.','Connect note names to a specific finger and string.'],
+      next:['Add simple key signatures with one sharp or one flat through scales already being studied.']
+    },
+    'Early intermediate': {
+      knowledge:['Understand the key signatures of the scales and pieces the student is playing.','Know in practical terms how major and minor scales are organised.','Recognise basic articulation: legato, detache, staccato and accents.','Start to understand simple form such as A-B-A and phrase structure.','Begin to understand intervals, at least steps, skips and basic tuning relationships.'],
+      checklist:['Recognises the key signatures used in current scales.','Can explain the difference between legato and staccato.','Can identify a musical phrase.','Can describe a simple form.','Understands basic dynamic changes including crescendo and diminuendo.'],
+      teaching:['When teaching a new scale, also explain its key signature and tonal centre.','Show articulation through one real bar of music.','Teach form by marking sections in colours or labels.'],
+      next:['Gradually add minor keys, interval awareness and very simple tonic-dominant understanding.']
+    },
+    'Intermediate': {
+      knowledge:['Understand common keys, scales, arpeggios and how they support repertoire.','Recognise more advanced rhythms such as dotted patterns, triplets or syncopations when appropriate.','Understand larger formal design and know where contrast, return and climax happen.','Begin to understand harmonic tension, cadence, tonic and dominant in practice.','Recognise common Italian expression and tempo terms and relate them to character.'],
+      checklist:['Can explain the key and tonal anchors of a piece.','Can break down a rhythmically difficult passage.','Can describe the form of a movement or short work.','Understands common tempo and expression terms.','Can connect theory to interpretive decisions.'],
+      teaching:['Ask the student why the phrase moves toward a certain note or climax.','Link theory words directly to intonation, bowing and expression.','Have the student explain the form in their own words.'],
+      next:['Add more detailed work on form, cadences and stylistic understanding by period.']
+    },
+    'Competition preparation': {
+      knowledge:['Theory should support secure performance: key, form, harmonic goals and points of tension should be clear.','The student should understand expression marks, articulation, style and agogic shape in the performance piece.','The student should know the anchor notes, cadences, climaxes and directional flow of the music.','The student should be able to describe the character and structure of the piece briefly in words.'],
+      checklist:['Can analyse the main formal parts of the performance piece.','Can identify harmonic anchor points and risk spots.','Knows why a bowing, dynamic or phrase choice was made.','Can read common markings quickly and respond to them.'],
+      teaching:['Use theory as support for memory, confidence and musical conviction.','Before performance, reinforce understanding instead of overloading the student with new theory.','Ask the student to explain the piece briefly before playing it.'],
+      next:['Strengthen analytical checkpoints inside the competition repertoire and connect them to performance routine.']
+    }
+  }
+};
+
+const seedData = [
+  {id:1,name:'Anna Novakova',birthDate:'2012-04-18',level:'Early intermediate',practice:'25 minutes, 5 times a week',goals:'Stabilise bow work, improve high-position intonation, prepare for a competition.',risks:'Right arm tension, insecure shifting and intonation into third position.',target:'Autumn competition and stronger confidence in Kuchler Concertino.',lessons:[{date:'2026-05-10',focus:'Bow and detache',technique:'Contact point control and bow distribution.',repertoire:'Kuchler Concertino op. 11',next:'Safer shifts into third position.'}],repertoire:[{type:'Piece',status:'Played',title:'Kuchler: Concertino op. 11',note:'Concertino foundation.'},{type:'Etude',status:'Played',title:'Wohlfahrt op. 45 No. 12',note:'Bow and intonation work.'}],privateNotes:[{date:'2026-05-11',text:'Motivated student, but stress rises before mock performance. Keep comments short and specific.'}],attendance:[{date:'2026-05-10',status:'Present',note:'Good focus.'},{date:'2026-05-03',status:'Late',note:'Arrived 10 minutes late.'}],events:[{date:'2026-05-20',type:'Regular lesson',title:'Weekly lesson',student:'Anna Novakova',time:'16:00-16:45',note:'Regular weekly slot.'},{date:'2026-10-15',type:'Competition',title:'Autumn youth strings competition',student:'Anna Novakova',time:'',note:'Prepare Kuchler and lyrical piece.'}],instrument:{type:'Violin',size:'1/2',name:'Eastman student violin',changed:'2025-09-01',note:'Recently adjusted shoulder rest.'},instrumentHistory:[{date:'2025-09-01',size:'1/2',text:'Changed from 1/4 to 1/2 violin.'}],weeklySlots:[{day:'Monday',type:'Regular lesson',time:'16:00-16:45',frequency:'Weekly',note:'Main weekly lesson slot.'},{day:'Thursday',type:'Extra lesson',time:'18:00-18:30',frequency:'Occasional',note:'Used before competition.'}]},
+  {id:2,name:'Jakub Svoboda',birthDate:'2016-09-02',level:'Beginner',practice:'12 minutes, 5 times a week',goals:'Stable posture, clean strings, simple rhythm.',risks:'Unstable violin hold, short concentration span, rhythm insecurity.',target:'Internal studio concert in two months.',lessons:[{date:'2026-05-12',focus:'Posture and rhythm',technique:'Relaxed shoulders, open strings, clapped rhythm.',repertoire:'Twinkle',next:'Keep the home routine short and regular.'}],repertoire:[{type:'Piece',status:'Played',title:'Twinkle',note:'Basic string orientation.'}],privateNotes:[{date:'2026-05-12',text:'Works better with very short tasks and visible routine chart.'}],attendance:[{date:'2026-05-12',status:'Present',note:'Needed frequent resets but engaged well.'}],events:[{date:'2026-05-21',type:'Regular lesson',title:'Weekly lesson',student:'Jakub Svoboda',time:'15:00-15:30',note:'Regular weekly slot.'},{date:'2026-07-05',type:'Concert',title:'Studio summer concert',student:'Jakub Svoboda',time:'',note:'Possible Twinkle or Lightly Row.'}],instrument:{type:'Violin',size:'1/8',name:'Rental violin',changed:'2026-01-15',note:'Check bow tension habits.'},instrumentHistory:[{date:'2026-01-15',size:'1/8',text:'Moved to current rental 1/8 violin.'}],weeklySlots:[{day:'Tuesday',type:'Regular lesson',time:'15:00-15:30',frequency:'Weekly',note:'Main weekly lesson slot.'},{day:'Friday',type:'Make-up lesson',time:'14:00-14:30',frequency:'Occasional',note:'Used when Tuesday is missed.'}]}
+];
+
+let data = structuredClone(seedData);
+let currentStudentId = data[0].id;
+let currentMode = 'teacher';
+const el = id => document.getElementById(id);
+const norm = t => (t||'').toLowerCase();
+const currentStudent = () => data.find(s => s.id === currentStudentId);
+function ensureArrays(s){ s.lessons=s.lessons||[]; s.repertoire=s.repertoire||[]; s.privateNotes=s.privateNotes||[]; s.attendance=s.attendance||[]; s.events=s.events||[]; s.weeklySlots=s.weeklySlots||[]; s.instrument=s.instrument||{type:'Violin',size:'',name:'',changed:'',note:''}; s.instrumentHistory=s.instrumentHistory||[]; }
+function age(dateStr){ if(!dateStr) return null; const d=new Date(dateStr); const n=new Date(); let a=n.getFullYear()-d.getFullYear(); if(n.getMonth()<d.getMonth() || (n.getMonth()===d.getMonth() && n.getDate()<d.getDate())) a--; return a; }
+function detectProblems(s){ const blob=[s.goals,s.risks,s.target,...(s.lessons||[]).flatMap(l=>[l.focus,l.technique,l.next])].join(' ').toLowerCase(); return Object.keys(db.problems).filter(k=>blob.includes(k)); }
+function currentPlayedTitles(s){ return (s.repertoire||[]).map(r=>norm(r.title)); }
+
+function buildSuggestions(s){
+  const ageNum = age(s.birthDate); const levelData = db.levels[s.level] || db.levels['Beginner']; const probs = detectProblems(s); const played = currentPlayedTitles(s).join(' | ');
+  const etudes=[...levelData.etudes], reps=[...levelData.rep], priorities=[], tips=[], reasons=[];
+  probs.forEach(p=>{ const item=db.problems[p]; etudes.push(...item.etudes); reps.push(...item.reps); priorities.push(...item.priorities); tips.push(...item.tips); reasons.push(`Because the student shows the area “${p}”, it makes sense to link one technical task, one scale pattern and one short repertoire goal in the same cycle.`); });
+  if(played.includes('twinkle')) reps.push('Lightly Row','Song of the Wind','Go Tell Aunt Rhody');
+  if(played.includes('kuchler')) reps.push('Telemann: Concerto in D major','Seitz: Student Concerto No. 2','A lyrical tone-building piece');
+  if(norm(s.target).includes('competition') || s.level === 'Competition preparation'){ priorities.push('Reduce the amount of new material and strengthen performance stability.'); tips.push('Include one mock performance each week with no stopping.'); reasons.push('Competition preparation needs less breadth and more consistency under pressure.'); }
+  if(ageNum !== null && ageNum <= 10){ tips.push('For a younger student, keep the home task in 2–3 points and keep the order similar across several days.'); reasons.push('A younger student usually responds better to short repeated routines than to a long task list.'); }
+  const nextLesson=[...levelData.nextLesson]; if(probs.includes('shifting')) nextLesson.push('Add a short 1st-3rd position pattern with hearing-ahead before moving.'); if(probs.includes('intonation')) nextLesson.push('Use a reference note and stop on arrival pitches.'); if(probs.includes('bow')) nextLesson.push('In one phrase, focus only on contact point and bow division.');
+  return {etudes:[...new Set(etudes)].slice(0,3),repertoire:[...new Set(reps)].filter(x=>!played.includes(norm(x))).slice(0,3),priorities:[...new Set(priorities)].slice(0,5),teaching:[...new Set(tips)].slice(0,5),nextLesson:[...new Set(nextLesson)].slice(0,4),reasons:[...new Set(reasons.length?reasons:[`These suggestions come from the student's level, age and current repertoire history.`])].slice(0,4)};
+}
+
+function buildTheory(s){
+  const base = db.theory[s.level] || db.theory['Beginner']; const probs = detectProblems(s); const knowledge=[...base.knowledge], checklist=[...base.checklist], teaching=[...base.teaching], next=[...base.next];
+  if(probs.includes('intonation')){ teaching.push('Connect tonal theory to anchor notes, open strings and scale centres.'); checklist.push('Can identify tonic or key-centre anchor notes in scales or pieces.'); }
+  if(probs.includes('rhythm')){ teaching.push('Move rhythm from speech and clapping into bowing and left-hand playing.'); checklist.push('Can say or clap the rhythm before playing it.'); }
+  if(norm(s.target).includes('competition')){ knowledge.push('For performance, the student should understand form, climaxes and returns in the piece.'); next.push('Before performance, strengthen analytical memory points inside the piece.'); }
+  return {knowledge:[...new Set(knowledge)].slice(0,7), checklist:[...new Set(checklist)].slice(0,7), teaching:[...new Set(teaching)].slice(0,7), next:[...new Set(next)].slice(0,4)};
+}
+
+function build14DayPlan(s,sug){
+  const practice=s.practice||'short regular routine'; const days=[];
+  for(let i=1;i<=14;i++){
+    const phase=i<=4?'stabilising':i<=9?'connecting':'consolidating'; let focus=''; if(i%3===1) focus=sug.priorities[0]||'basic technical security'; else if(i%3===2) focus=sug.etudes[0]||'short etude'; else focus=sug.repertoire[0]||'next piece';
+    const lines=[]; if(phase==='stabilising') lines.push('Work slowly with no rush and high attention to movement quality.'); if(phase==='connecting') lines.push('Move the technical idea directly into one place in the piece.'); if(phase==='consolidating') lines.push('Play a longer section and check stability with less stopping.'); lines.push(`Main focus: ${focus}`); lines.push(`Practice routine: ${practice}`); if(i===7||i===14) lines.push('Check-in day: one short run-through and one sentence about what improved.'); days.push({day:`Day ${i}`,text:lines.join(' ')});
+  }
+  return {days};
+}
+
+function buildSimpleTheory(theory){ return [...theory.knowledge.slice(0,3), ...theory.next.slice(0,2)]; }
+function buildAttendanceSummary(s){ const counts={Present:0,Late:0,Absent:0,Cancelled:0}; (s.attendance||[]).forEach(a=>counts[a.status]=(counts[a.status]||0)+1); return counts; }
+
+function buildPrintableHomePlan(s,sug,plan){
+  const nextEvent=(s.events||[]).slice().sort((a,b)=>a.date.localeCompare(b.date))[0];
+  return `
+    <h3 style="margin-top:0">Home Practice Plan</h3>
+    <p><strong>Student:</strong> ${s.name}<br><strong>Level:</strong> ${s.level}<br><strong>Routine:</strong> ${s.practice || 'To be added'}</p>
+    <div class="list">
+      <div class="item"><strong>Main goal this week</strong><span>${sug.priorities[0] || 'Build secure basics.'}</span></div>
+      <div class="item"><strong>Instrument</strong><span>${s.instrument?.type || 'Violin'} ${s.instrument?.size || ''} · ${s.instrument?.name || 'not added yet'}</span></div>
+      <div class="item"><strong>Technical work</strong><span>${sug.etudes.join('; ')}</span></div>
+      <div class="item"><strong>Pieces to focus on</strong><span>${sug.repertoire.join('; ')}</span></div>
+      <div class="item"><strong>Helpful reminder</strong><span>${sug.teaching[0] || 'Keep work short, focused and regular.'}</span></div>
+      ${nextEvent ? `<div class="item"><strong>Upcoming event</strong><span>${nextEvent.date} · ${nextEvent.type}: ${nextEvent.title}</span></div>` : ''}
+    </div>
+    <h4>Short 14-day outline</h4>
+    <div class="list">${plan.days.slice(0,6).map(d=>`<div class="item"><strong>${d.day}</strong><span>${d.text}</span></div>`).join('')}</div>
+  `;
+}
+
+function buildProgressSheet(s,sug,theory){
+  const canDo = (s.repertoire||[]).filter(x=>x.status==='Played').map(x=>x.title).slice(0,5);
+  const learning = [...sug.etudes, ...sug.repertoire].slice(0,5);
+  const next = [...sug.priorities, ...theory.next].slice(0,5);
+  return `
+    <h3 style="margin-top:0">Progress Sheet</h3>
+    <p><strong>Student:</strong> ${s.name}<br><strong>Level:</strong> ${s.level}<br><strong>Target:</strong> ${s.target || 'To be added'}</p>
+    <div class="grid three-col">
+      <div class="item"><strong>What I can do</strong><span>${canDo.length ? canDo.join('; ') : 'Add completed pieces or skills.'}</span></div>
+      <div class="item"><strong>What I am learning</strong><span>${learning.length ? learning.join('; ') : 'Add current focus areas.'}</span></div>
+      <div class="item"><strong>What comes next</strong><span>${next.length ? next.join('; ') : 'Add next goals.'}</span></div>
+    </div>
+    <h4>Theory focus</h4>
+    <div class="list">${theory.checklist.slice(0,4).map(x=>`<div class="item"><span>${x}</span></div>`).join('')}</div>
+  `;
+}
+
+function renderList(id,arr,cls=''){ const target=el(id); if(!target) return; target.innerHTML = arr.length ? arr.map((x,i)=>`<div class="item ${cls}"><strong>${i+1}.</strong><span>${x}</span></div>`).join('') : '<div class="empty">No items yet.</div>'; }
+function renderStudentList(){ const list=el('studentList'); list.innerHTML=''; data.forEach(s=>{ const counts=buildAttendanceSummary(s); const b=document.createElement('button'); b.className='student-chip'+(s.id===currentStudentId?' active':''); b.innerHTML=`<strong>${s.name}</strong><span class="muted">${s.level}</span><span class="faint">Present ${counts.Present || 0} · Events ${(s.events||[]).length}</span>`; b.onclick=()=>{currentStudentId=s.id; renderAll();}; list.appendChild(b); }); }
+
+function renderAll(){
+  const s=currentStudent(); ensureArrays(s); const sug=buildSuggestions(s); const theory=buildTheory(s); const plan=build14DayPlan(s,sug); const probs=detectProblems(s); const a=age(s.birthDate); const simpleTheory=buildSimpleTheory(theory); const attendanceSummary=buildAttendanceSummary(s);
+  renderStudentList(); el('studentName').textContent=s.name; el('studentSubtitle').textContent=currentMode==='teacher' ? `${s.level} · ${s.target || s.goals || 'Add a target.'}` : `${s.level} · Weekly violin overview`;
+  el('kpis').innerHTML=(currentMode==='teacher' ? [['Age',a ?? '—','years'],['Lessons',s.lessons.length,'entries'],['Attendance',`${attendanceSummary.Present||0}/${s.attendance.length||0}`,'present'],['Calendar',s.events.length,'items']] : [['Level',s.level,''],['Instrument',`${s.instrument?.size || '—'} ${s.instrument?.type || ''}`,''],['Current goal',sug.priorities[0] || 'Build steady basics',''],['Next event',(s.events[0]?.title) || 'No event yet','']]).map(([a,b,c])=>`<div class="card"><span class="pill">${a}</span><div style="font-size:var(--text-lg);font-weight:700;margin-top:.5rem">${b}</div><div class="muted">${c}</div></div>`).join('');
+  if(el('nameInput')){
+    if(el('instrumentType')){ el('instrumentType').value=s.instrument?.type||'Violin'; el('instrumentSize').value=s.instrument?.size||'1/4'; el('instrumentName').value=s.instrument?.name||''; el('instrumentChanged').value=s.instrument?.changed||''; el('instrumentNote').value=s.instrument?.note||''; } el('nameInput').value=s.name||''; el('birthInput').value=s.birthDate||''; el('levelInput').value=s.level||'Beginner'; el('practiceInput').value=s.practice||''; el('goalsInput').value=s.goals||''; el('risksInput').value=s.risks||''; el('targetInput').value=s.target||''; }
+  if(el('quickProfile')) el('quickProfile').innerHTML=`<div class="item"><strong>Age and level</strong><span>${a ?? '—'} years · ${s.level}</span></div><div class="item"><strong>Instrument</strong><span>${s.instrument?.type || 'Violin'} ${s.instrument?.size || ''} · ${s.instrument?.name || 'not added yet'}</span></div><div class="item"><strong>Detected technical areas</strong><span>${probs.join(', ') || 'general level-based planning'}</span></div><div class="item"><strong>Target</strong><span>${s.target || 'not added yet'}</span></div>`;
+  if(el('lessonTimeline')) el('lessonTimeline').innerHTML=s.lessons.length?s.lessons.map(l=>`<div class="item"><strong>${l.date} — ${l.focus}</strong><span><b>Technique:</b> ${l.technique||'—'}<br><b>Repertoire:</b> ${l.repertoire||'—'}<br><b>Next direction:</b> ${l.next||'—'}</span></div>`).join(''):'<div class="empty">No lesson entries yet.</div>';
+  if(el('repertoireList')) el('repertoireList').innerHTML=s.repertoire.length?s.repertoire.map(r=>`<div class="item"><strong>${r.type} · ${r.status}</strong><span>${r.title}</span><div class="muted" style="margin-top:.35rem">${r.note||''}</div></div>`).join(''):'<div class="empty">No repertoire yet.</div>';
+  renderList('etudeSuggestions',sug.etudes); renderList('repertoireSuggestions',sug.repertoire); renderList('prioritySuggestions',sug.priorities); renderList('teachingSuggestions',sug.teaching,'good'); renderList('nextLessonSuggestions',sug.nextLesson); renderList('reasonSuggestions',sug.reasons,'warn');
+  renderList('theoryKnowledge',theory.knowledge); renderList('theoryChecklist',theory.checklist); renderList('theoryTeaching',theory.teaching,'good'); renderList('theoryNext',theory.next,'warn'); renderList('studentTheorySimple',simpleTheory);
+  if(el('privateNotesList')) el('privateNotesList').innerHTML=s.privateNotes.length?s.privateNotes.map(n=>`<div class="item danger-soft"><strong>${n.date}</strong><span>${n.text}</span></div>`).join(''):'<div class="empty">No private notes yet.</div>';
+  if(el('attendanceList')) el('attendanceList').innerHTML=s.attendance.length?s.attendance.map(a=>`<div class="item"><strong>${a.date}</strong><span class="status ${a.status.toLowerCase()}">${a.status}</span><div class="muted" style="margin-top:.35rem">${a.note||''}</div></div>`).join(''):'<div class="empty">No attendance records yet.</div>';
+  if(el('calendarList')) el('calendarList').innerHTML=s.events.length?s.events.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(ev=>`<div class="item"><strong>${ev.date} · ${ev.type}</strong><span>${ev.title}</span><div class="muted" style="margin-top:.35rem">${ev.student||s.name}${ev.time?` · ${ev.time}`:''}${ev.note?` · ${ev.note}`:''}</div></div>`).join(''):'<div class="empty">No calendar events yet.</div>';
+  if(el('weeklyScheduleList')) el('weeklyScheduleList').innerHTML=s.weeklySlots.length?s.weeklySlots.map(w=>`<div class="item"><strong>${w.day} · ${w.type}</strong><span>${w.time} · ${w.frequency}</span><div class="muted" style="margin-top:.35rem">${w.note||''}</div></div>`).join(''):'<div class="empty">No weekly slots yet.</div>';
+  if(el('instrumentHistoryList')) el('instrumentHistoryList').innerHTML=s.instrumentHistory.length?s.instrumentHistory.map(i=>`<div class="item"><strong>${i.date} · ${i.size}</strong><span>${i.text||''}</span></div>`).join(''):'<div class="empty">No instrument history yet.</div>';
+  el('homePlanSheet').innerHTML = buildPrintableHomePlan(s,sug,plan);
+  el('progressSheet').innerHTML = buildProgressSheet(s,sug,theory);
+}
+
+function saveProfile(){ const s=currentStudent(); s.name=el('nameInput').value||'Unnamed student'; s.birthDate=el('birthInput').value; s.level=el('levelInput').value; s.practice=el('practiceInput').value; s.goals=el('goalsInput').value; s.risks=el('risksInput').value; s.target=el('targetInput').value; renderAll(); }
+function saveLesson(){ const s=currentStudent(); const date=el('lessonDate').value, focus=el('lessonFocus').value.trim(); if(!date||!focus) return alert('Please fill in the date and focus.'); s.lessons.unshift({date,focus,technique:el('lessonTechnique').value.trim(),repertoire:el('lessonRep').value.trim(),next:el('lessonNext').value.trim()}); ['lessonDate','lessonFocus','lessonTechnique','lessonRep','lessonNext'].forEach(id=>el(id).value=''); renderAll(); }
+function saveRep(){ const s=currentStudent(); const title=el('repTitle').value.trim(); if(!title) return alert('Please enter a title.'); s.repertoire.unshift({type:el('repType').value,status:el('repStatus').value,title,note:el('repNote').value.trim()}); ['repTitle','repNote'].forEach(id=>el(id).value=''); renderAll(); }
+function savePrivateNote(){ const s=currentStudent(); const text=el('privateNoteInput').value.trim(); if(!text) return alert('Please enter a private note.'); s.privateNotes.unshift({date:new Date().toISOString().slice(0,10),text}); el('privateNoteInput').value=''; renderAll(); }
+function saveInstrument(){ const s=currentStudent(); s.instrument={type:el('instrumentType').value,size:el('instrumentSize').value,name:el('instrumentName').value.trim(),changed:el('instrumentChanged').value,note:el('instrumentNote').value.trim()}; renderAll(); }
+function saveInstrumentHistory(){ const s=currentStudent(); const date=el('historyDate').value, size=el('historySize').value.trim(); if(!date||!size) return alert('Please enter date and size.'); s.instrumentHistory.unshift({date,size,text:el('historyText').value.trim()}); el('historyDate').value=''; el('historySize').value=''; el('historyText').value=''; renderAll(); }
+function saveWeeklySlot(){ const s=currentStudent(); const time=el('slotTime').value.trim(); if(!time) return alert('Please enter time.'); s.weeklySlots.push({day:el('slotDay').value,type:el('slotType').value,time,frequency:el('slotFrequency').value,note:el('slotNote').value.trim()}); ['slotTime','slotNote'].forEach(id=>el(id).value=''); renderAll(); }
+function saveAttendance(){ const s=currentStudent(); const date=el('attendanceDate').value; if(!date) return alert('Please enter a date.'); s.attendance.unshift({date,status:el('attendanceStatus').value,note:el('attendanceNote').value.trim()}); ['attendanceDate','attendanceNote'].forEach(id=>el(id).value=''); renderAll(); }
+function saveEvent(){ const s=currentStudent(); const date=el('eventDate').value, title=el('eventTitle').value.trim(); if(!date||!title) return alert('Please enter date and title.'); s.events.push({date,type:el('eventType').value,title,student:el('eventStudent').value.trim()||s.name,time:el('eventTime').value.trim(),note:el('eventNote').value.trim()}); ['eventDate','eventTitle','eventStudent','eventTime','eventNote'].forEach(id=>el(id).value=''); renderAll(); }
+function addStudent(){ const name=prompt('Name of the new student'); if(!name) return; const s={id:Date.now(),name,birthDate:'',level:'Beginner',practice:'',goals:'',risks:'',target:'',lessons:[],repertoire:[],privateNotes:[],attendance:[],events:[]}; data.push(s); currentStudentId=s.id; renderAll(); }
+function exportData(){ const blob=new Blob([JSON.stringify({app:'Violin Teaching Assistant v10',students:data},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='violin-teaching-assistant-v8-data.json'; a.click(); URL.revokeObjectURL(a.href); }
+function importData(file){ const r=new FileReader(); r.onload=e=>{ try{ const parsed=JSON.parse(e.target.result); data=Array.isArray(parsed)?parsed:parsed.students; data.forEach(ensureArrays); currentStudentId=data[0].id; renderAll(); }catch{ alert('The file could not be loaded.'); } }; r.readAsText(file); }
+function activateTab(tab){ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab)); document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===tab)); }
+function setMode(mode){ currentMode=mode; const root=el('appRoot'); root.classList.toggle('student-mode', mode==='student'); el('teacherModeBtn').classList.toggle('active', mode==='teacher'); el('studentModeBtn').classList.toggle('active', mode==='student'); if(mode==='student' && ['profile','lessons','repertoire','suggestions','private','attendance'].includes(document.querySelector('.tab.active')?.dataset.tab)) activateTab('homeplan'); renderAll(); }
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab)); el('newStudentBtn').onclick=addStudent; el('saveInstrumentBtn').onclick=saveInstrument; el('saveInstrumentHistoryBtn').onclick=saveInstrumentHistory; el('saveSlotBtn').onclick=saveWeeklySlot; el('exportBtn').onclick=exportData; el('importFile').addEventListener('change',e=>e.target.files[0]&&importData(e.target.files[0])); el('saveProfileBtn').onclick=saveProfile; el('saveLessonBtn').onclick=saveLesson; el('saveRepBtn').onclick=saveRep; el('savePrivateNoteBtn').onclick=savePrivateNote; el('saveAttendanceBtn').onclick=saveAttendance; el('saveEventBtn').onclick=saveEvent; el('analyzeBtn').onclick=()=>{renderAll(); activateTab('suggestions');}; el('printHomeBtn').onclick=()=>{activateTab('homeplan'); setTimeout(()=>window.print(),150);}; el('printProgressBtn').onclick=()=>{activateTab('progress'); setTimeout(()=>window.print(),150);}; el('teacherModeBtn').onclick=()=>setMode('teacher'); el('studentModeBtn').onclick=()=>setMode('student');
+(function(){const t=document.querySelector('[data-theme-toggle]');const r=document.documentElement;let d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';r.setAttribute('data-theme',d);t.textContent=d==='dark'?'☀️':'🌙';t.onclick=()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);t.textContent=d==='dark'?'☀️':'🌙';};})();
+data.forEach(ensureArrays); renderAll();
+</script>
+</body>
+</html>
