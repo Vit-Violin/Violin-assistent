@@ -245,8 +245,13 @@
               <div class="field"><label for="eventType">Type</label><select id="eventType"><option>Regular lesson</option><option>Make-up lesson</option><option>Extra lesson</option><option>Concert</option><option>Competition</option><option>Exam</option><option>Masterclass</option><option>Other event</option></select></div>
               <div class="field-full"><label for="eventTitle">Title</label><input id="eventTitle"></div>
               <div class="field"><label for="eventStudent">Student</label><input id="eventStudent" placeholder="Name or All students"></div>
-              <div class="field"><label for="eventTime">Time</label><input id="eventTime" placeholder="16:00-16:45"></div>
-              <div class="field-full"><label for="eventNote">Note</label><textarea id="eventNote"></textarea></div>
+              <div class="field"><label for="eventTime">Time</label><input id="eventTime" placeholder="16:00-16:45"></div>place: $('#eventPlace').value.trim(),
+category: $('#eventCategory').value.trim(),
+repertoire: $('#eventRepertoire').value.trim(),
+result: $('#eventResult').value.trim(),              <div class="field"><label for="eventPlace">Place</label><input id="eventPlace"></div>
+<div class="field"><label for="eventCategory">Category</label><input id="eventCategory" placeholder="e.g. Junior, Grade 5, Studio concert"></div>
+<div class="field-full"><label for="eventRepertoire">Repertoire</label><input id="eventRepertoire" placeholder="Pieces for this event"></div>
+<div class="field"><label for="eventResult">Result</label><input id="eventResult" placeholder="Prize, mark, feedback"></div>              <div class="field-full"><label for="eventNote">Note</label><textarea id="eventNote"></textarea></div>
               <div class="field-full"><button class="btn btn-primary" id="saveEventBtn">Save event</button></div>
             </div>
           </div>
@@ -442,7 +447,7 @@ function renderAll(){
   renderList('theoryKnowledge',theory.knowledge); renderList('theoryChecklist',theory.checklist); renderList('theoryTeaching',theory.teaching,'good'); renderList('theoryNext',theory.next,'warn'); renderList('studentTheorySimple',simpleTheory);
   if(el('privateNotesList')) el('privateNotesList').innerHTML=s.privateNotes.length?s.privateNotes.map(n=>`<div class="item danger-soft"><strong>${n.date}</strong><span>${n.text}</span></div>`).join(''):'<div class="empty">No private notes yet.</div>';
   if(el('attendanceList')) el('attendanceList').innerHTML=s.attendance.length?s.attendance.map(a=>`<div class="item"><strong>${a.date}</strong><span class="status ${a.status.toLowerCase()}">${a.status}</span><div class="muted" style="margin-top:.35rem">${a.note||''}</div></div>`).join(''):'<div class="empty">No attendance records yet.</div>';
-  if(el('calendarList')) el('calendarList').innerHTML=s.events.length?s.events.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(ev=>`<div class="item"><strong>${ev.date} · ${ev.type}</strong><span>${ev.title}</span><div class="muted" style="margin-top:.35rem">${ev.student||s.name}${ev.time?` · ${ev.time}`:''}${ev.note?` · ${ev.note}`:''}</div></div>`).join(''):'<div class="empty">No calendar events yet.</div>';
+  if(el('calendarList')) el('calendarList').innerHTML=s.events.length?s.events.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(ev=>`<div class="item"><strong>${ev.date} · ${ev.type}</strong><span>${ev.title}</span><div class="muted" style="margin-top:.35rem">${ev.student||s.name}${ev.time?` · ${ev.time}`:''}${ev.place?` · ${ev.place}`:''}${ev.category?` · ${ev.category}`:''}${ev.repertoire?` · Repertoire: ${ev.repertoire}`:''}${ev.result?` · Result: ${ev.result}`:''}${ev.note?` · ${ev.note}`:''}</div></div>`).join(''):'<div class="empty">No calendar events yet.</div>';
   if(el('weeklyScheduleList')) el('weeklyScheduleList').innerHTML=s.weeklySlots.length?s.weeklySlots.map(w=>`<div class="item"><strong>${w.day} · ${w.type}</strong><span>${w.time} · ${w.frequency}</span><div class="muted" style="margin-top:.35rem">${w.note||''}</div></div>`).join(''):'<div class="empty">No weekly slots yet.</div>';
   if(el('instrumentHistoryList')) el('instrumentHistoryList').innerHTML=s.instrumentHistory.length?s.instrumentHistory.map(i=>`<div class="item"><strong>${i.date} · ${i.size}</strong><span>${i.text||''}</span></div>`).join(''):'<div class="empty">No instrument history yet.</div>';
   el('homePlanSheet').innerHTML = buildPrintableHomePlan(s,sug,plan);
