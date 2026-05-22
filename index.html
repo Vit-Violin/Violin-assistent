@@ -461,7 +461,7 @@ function saveInstrument(){ const s=currentStudent(); s.instrument={type:el('inst
 function saveInstrumentHistory(){ const s=currentStudent(); const date=el('historyDate').value, size=el('historySize').value.trim(); if(!date||!size) return alert('Please enter date and size.'); s.instrumentHistory.unshift({date,size,text:el('historyText').value.trim()}); el('historyDate').value=''; el('historySize').value=''; el('historyText').value=''; renderAll(); }
 function saveWeeklySlot(){ const s=currentStudent(); const time=el('slotTime').value.trim(); if(!time) return alert('Please enter time.'); s.weeklySlots.push({day:el('slotDay').value,type:el('slotType').value,time,frequency:el('slotFrequency').value,note:el('slotNote').value.trim()}); ['slotTime','slotNote'].forEach(id=>el(id).value=''); renderAll(); }
 function saveAttendance(){ const s=currentStudent(); const date=el('attendanceDate').value; if(!date) return alert('Please enter a date.'); s.attendance.unshift({date,status:el('attendanceStatus').value,note:el('attendanceNote').value.trim()}); ['attendanceDate','attendanceNote'].forEach(id=>el(id).value=''); renderAll(); }
-function saveEvent(){
+  
 function saveEvent(){
   const s=currentStudent();
   const date=el('eventDate').value, title=el('eventTitle').value.trim();
